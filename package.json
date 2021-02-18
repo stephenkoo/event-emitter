@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "clean": "rm -Rf ./node_modules"
   },
   "devDependencies": {
     "@types/jest": "26.0.20",
