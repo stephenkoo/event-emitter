@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "clean": "rm -Rf ./node_modules"
+    "clean": "rm -Rf ./node_modules",
+    "build": "tsc --project tsconfig.build.json"
   },
   "devDependencies": {
     "@types/jest": "26.0.20",
