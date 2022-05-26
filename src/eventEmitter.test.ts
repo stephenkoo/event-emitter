@@ -74,7 +74,7 @@ describe("EventEmitter", () => {
     expect(keyPressCallbackArguments).toEqual(payload);
   });
 
-  it.skip("can register multiple callbacks for a given event", () => {
+  it("can register multiple callbacks for a given event", () => {
     const eventEmitter = new EventEmitter();
     const callbacks = [jest.fn(), jest.fn(), jest.fn()];
     const payload = {};

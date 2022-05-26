@@ -1,8 +1,6 @@
 /**
  * @todo
- * - Handle multiple listeners assigned to the same eventType
  * - Improve type safety (acceptable payload arguments) via generics
- * - Refactor/add to tests
  * - Add an "unregister/off" function
  * - Rename "register" to "on" to match node.js naming convention?
  * - Add "once" function which un-registers listener once called (quality of life)
@@ -16,7 +14,7 @@ type EventListener = (...payload: unknown[]) => void;
  */
 export class EventEmitter {
   private listeners: {
-    [eventName: string]: EventListener;
+    [eventName: string]: EventListener[];
   } = {};
 
   /**
@@ -25,7 +23,8 @@ export class EventEmitter {
    * @param listener Callback function
    */
   register(eventName: string, listener: EventListener) {
-    this.listeners[eventName] = listener;
+    const updatedListeners = (this.listeners[eventName] || []).concat(listener);
+    this.listeners[eventName] = updatedListeners;
   }
 
   /**
@@ -38,6 +37,8 @@ export class EventEmitter {
       throw new Error(`${eventName} is not a registered listener`);
     }
 
-    this.listeners[eventName](...payload);
+    this.listeners[eventName].forEach((listener) => {
+      listener(...payload);
+    });
   }
 }
