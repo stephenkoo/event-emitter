@@ -1,10 +1,3 @@
-/**
- * @todo
- * - Add an "unregister/off" function
- * - Rename "register" to "on" to match node.js naming convention?
- * - Add "once" function which un-registers listener once called (quality of life)
- */
-
 type EventListener<T extends unknown[]> = (...payload: T) => void;
 
 type EventPayloadMap = Record<string, unknown[]>;
@@ -74,38 +67,3 @@ export class EventEmitter<T extends EventPayloadMap> {
     });
   }
 }
-
-/**
- * @NOTE
- * I tested typing constraints work correctly by running tsc on the commented code below.
- * I would usually not include this but left in for your convenience to check that type constraints
- * are working as intended.
- */
-// const eventEmitter = new EventEmitter<{
-//   mouseClick: [string, number];
-//   hover: [number];
-// }>();
-
-// // SHOULD PASS TYPESCRIPT LINTING
-// eventEmitter.register("mouseClick", (aString: string, aNumber: number) => {});
-// eventEmitter.emit("mouseClick", "hello", 3);
-
-// // SHOULD FAIL TYPESCRIPT LINTING - INVALID PAYLOAD TYPE
-// eventEmitter.register(
-//   "mouseClick",
-//   (aString: string, aNumber: number, aWhat: string) => {}
-// );
-// eventEmitter.emit("mouseClick", "hello", 3, "haha");
-
-// // SHOULD PASS TYPESCRIPT LINTING
-// eventEmitter.register("hover", () => {});
-// eventEmitter.register("hover", (aNumber: number) => {});
-// eventEmitter.emit("hover", 1);
-
-// // SHOULD FAIL TYPESCRIPT LINTING - INVALID PAYLOAD TYPE
-// eventEmitter.register("hover", (what: string) => {});
-// eventEmitter.emit("hover", "hello");
-
-// // SHOULD FAIL TYPESCRIPT LINTING - UNRECOGNISED EVENT NAME
-// eventEmitter.register("funny", () => {});
-// eventEmitter.emit("funny");
