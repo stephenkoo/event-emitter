@@ -36,14 +36,18 @@ describe("EventEmitter", () => {
   });
 
   it("can register a callback for a given event", () => {
-    const eventEmitter = new EventEmitter();
+    const eventEmitter = new EventEmitter<{
+      mouseClick: [string, number, null, Record<string, string>];
+    }>();
     const callback = jest.fn();
-    const payload = {};
+    const payload = ["hello", 5, null, { foo: "bar" }] as const;
+
     eventEmitter.register("mouseClick", callback);
-    eventEmitter.emit("mouseClick", payload);
+    eventEmitter.emit("mouseClick", ...payload);
     expect(callback.mock.calls.length).toBe(1);
-    const callbackParam1 = callback.mock.calls[0][0];
-    expect(callbackParam1).toBe(payload);
+
+    const callbackArguments = callback.mock.calls[0];
+    expect(callbackArguments).toEqual(payload);
   });
 
   it("throws an error when emitting an undefined listener", () => {
@@ -56,36 +60,45 @@ describe("EventEmitter", () => {
   });
 
   it("can register different callbacks for a different events", () => {
-    const eventEmitter = new EventEmitter();
+    const eventEmitter = new EventEmitter<{
+      mouseClick: [string, number, null, Record<string, string>];
+      keyPress: [string, undefined, Record<string, string>];
+    }>();
     const mouseClickCallback = jest.fn();
     const keyPressCallback = jest.fn();
-    const payload = {};
+    const mouseClickPayload = ["hello", 5, null, { foo: "bar" }] as const;
+    const keyPressPayload = ["bye", undefined, {}] as const;
+
     eventEmitter.register("mouseClick", mouseClickCallback);
     eventEmitter.register("keyPress", keyPressCallback);
 
-    eventEmitter.emit("mouseClick", payload);
+    eventEmitter.emit("mouseClick", ...mouseClickPayload);
     expect(mouseClickCallback.mock.calls.length).toBe(1);
-    const mouseClickCallbackArguments = mouseClickCallback.mock.calls[0][0];
-    expect(mouseClickCallbackArguments).toEqual(payload);
+    const mouseClickCallbackArguments = mouseClickCallback.mock.calls[0];
+    expect(mouseClickCallbackArguments).toEqual(mouseClickPayload);
 
-    eventEmitter.emit("keyPress", payload);
+    eventEmitter.emit("keyPress", ...keyPressPayload);
     expect(keyPressCallback.mock.calls.length).toBe(1);
-    const keyPressCallbackArguments = keyPressCallback.mock.calls[0][0];
-    expect(keyPressCallbackArguments).toEqual(payload);
+    const keyPressCallbackArguments = keyPressCallback.mock.calls[0];
+    expect(keyPressCallbackArguments).toEqual(keyPressPayload);
   });
 
   it("can register multiple callbacks for a given event", () => {
-    const eventEmitter = new EventEmitter();
+    const eventEmitter = new EventEmitter<{
+      mouseClick: [string];
+    }>();
     const callbacks = [jest.fn(), jest.fn(), jest.fn()];
-    const payload = {};
-    callbacks.forEach((cb) => {
-      eventEmitter.register("mouseClick", cb);
+    const payload = "will code for food";
+
+    callbacks.forEach((callback) => {
+      eventEmitter.register("mouseClick", callback);
     });
     eventEmitter.emit("mouseClick", payload);
-    callbacks.forEach((cb) => {
-      expect(cb.mock.calls.length).toBe(1);
-      const cbParam1 = cb.mock.calls[0][0];
-      expect(cbParam1).toBe(payload);
+
+    callbacks.forEach((callback) => {
+      expect(callback.mock.calls.length).toBe(1);
+      const callbackArgument = callback.mock.calls[0][0];
+      expect(callbackArgument).toEqual(payload);
     });
   });
 });
